@@ -20,3 +20,7 @@ jobs:
         go-version: ${{ matrix.go }}
     - name: test
       run: go test -v ./...
+    - name: lint
+      run:
+        curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.22.2
+        make lint
