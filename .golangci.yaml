@@ -1,0 +1,23 @@
+run:
+  deadline: 5m
+
+linters-settings:
+  gocyclo:
+    min-complexity: 20
+
+linters:
+  disable-all: true
+  enable:
+    - goimports
+    - golint
+    - govet
+    - misspell
+    - errcheck
+    - staticcheck
+    - prealloc
+    - ineffassign
+    - unused
+    - gocyclo
+    - gosimple
+    - structcheck
+    - varcheck
