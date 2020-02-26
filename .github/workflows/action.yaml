@@ -3,24 +3,40 @@ name: Actions
 on:
   push:
     branches:
-    - master
+    - "**"
+    tags-ignore:
+    - "v*"
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.13' ]
+        go: [ 1.13 ]
     steps:
-    - name: checkout
+    - name: Checkout
       uses: actions/checkout@v2
-    - name: setup go
+    - name: Setup Go environment
       uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go }}
-    - name: test
-      run: go test -v ./...
-    - name: lint
-      run:
-        curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.22.2
-        make lint
+    - name: Lint
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.6
+        ./bin/golangci-lint run -v ./...
+    - name: Use cache dependencies
+      uses: actions/cache@v1
+      id: cache
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+    - name: Download dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: go mod download
+    - name: Test
+      run: go test ./... -coverprofile=coverage.txt -covermode=atomic
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.txt
