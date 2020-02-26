@@ -22,10 +22,8 @@ jobs:
         go-version: ${{ matrix.go }}
     - name: Lint
       run: |
-        curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.22.2
-        which golangci-lint
-        sudo mv ./bin/golangci-lint $GOPATH/bin/
-        make lint
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.6
+        ./bin/golangci-lint run -v ./...
     - name: Use cache dependencies
       uses: actions/cache@v1
       id: cache
