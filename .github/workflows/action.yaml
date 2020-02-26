@@ -12,17 +12,22 @@ jobs:
       matrix:
         go: [ 1.13, 1.12 ]
     steps:
-    - name: checkout
+    - name: Checkout
       uses: actions/checkout@v2
-    - name: setup go
+    - name: Setup Go environment
       uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go }}
-    - name: lint
+    - name: Lint
       run:
         curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.22.2
         make lint
-    - name: download dependencies
+    - name: Download dependencies
       run: go mod download
-    - name: test
-      run: make test
+    - name: Test
+      run: go test ./... -coverprofile=coverage.txt -covermode=atomic
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.txt
