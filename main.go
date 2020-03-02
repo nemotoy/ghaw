@@ -6,8 +6,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-var Err = errors.New("")
+var e = errors.New("")
 
 func main() {
-	fmt.Println(Err)
+	fmt.Println(e)
 }
