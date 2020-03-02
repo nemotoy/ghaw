@@ -28,10 +28,6 @@ jobs:
     - name: Download dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: go mod download
-    - name: Lint
-      run: |
-        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.6
-        ./bin/golangci-lint run -v ./...
     - name: Test
       run: go test ./... -coverprofile=coverage.txt -covermode=atomic
     - name: Upload coverage to Codecov
